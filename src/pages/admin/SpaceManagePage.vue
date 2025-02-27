@@ -5,7 +5,10 @@
       <h2>空间管理</h2>
       <a-space>
         <a-button type="primary" href="/add_space" target="_blank">+ 创建空间</a-button>
+        <a-button type="primary" ghost href="/SpaceAnalyzePage?queryPublic=1" target="_blank">公共图库分析</a-button>
+        <a-button type="primary" ghost href="/SpaceAnalyzePage?queryAll=1" target="_blank">全空间分析</a-button>
       </a-space>
+
     </a-flex>
     <!-- 搜索表单-->
     <a-form layout="inline" :model="searchParams" @finish="doSearch">
@@ -68,8 +71,9 @@
         </template>
         <template v-else-if="column.key === 'action'">
           <a-space wrap>
-            <a-button type="link" :href="`/add_space?id=${record.id}`" target="_blank">编辑</a-button>
-            <a-button type="link" danger @click="doDelete(record.id)">删除</a-button>
+            <a-button type="dashed" :href="`/add_space?id=${record.id}`" target="_blank">编辑</a-button>
+            <a-button type="default" danger @click="doDelete(record.id)">删除</a-button>
+            <a-button type="primary" ghost :href="`/SpaceAnalyzePage?spaceId=${record.id}`" target="_blank">空间分析</a-button>
           </a-space>
         </template>
       </template>

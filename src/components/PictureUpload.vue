@@ -29,12 +29,13 @@ import { uploadPictureUsingPost} from "@/api/pictureController";
 
 interface Props {
   picture?: API.PictureVO
+
   spaceId?: number
   onSuccess?: (newPicture: API.PictureVO) => void
 }
 
 const props = defineProps<Props>();
-
+const open = ref();
 const loading = ref<boolean>(false);
 
 // 上传前校验
@@ -52,7 +53,6 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   return isJpgOrPng && isLt2M;
 };
 
-// 上传图片时传递spaceId
 
 // 上传图片
 const handleUpload = async ({file}: any) => {
@@ -66,13 +66,23 @@ const handleUpload = async ({file}: any) => {
       console.log(props.spaceId+"=====================");
       props.onSuccess?.(res.data.data);
     } else {
-      message.error(res.data.message);
+      message.error("图片上传失败"+res.data.message);
     }
-  } catch (e) {
+  } catch (error) {
+    console.log("图片上传失败"+error);
     message.error("上传图片失败");
   } finally {
     loading.value = false;
   }
+}
+
+// 编辑图片
+const doEditPicture = () => {
+  open.value.handleOk();
+}
+// 图片编辑成功
+const onCropSuccess = (newPicture: API.PictureVO) => {
+  picture.value = newPicture;
 }
 
 </script>

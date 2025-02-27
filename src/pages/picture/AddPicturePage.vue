@@ -20,6 +20,13 @@
     <a-form v-if="picture"
         layout="vertical" :model="pictureForm" @finish="handleSubmit">
 
+<!--      上传图片成功后显示此按钮-->
+
+      <a-flex justify="center" style="gap: 20px">
+        <a-button type="primary" @click="doEditPicture">编辑图片</a-button>
+        <a-button type="default" @click="doImageOutPain">AI扩图</a-button>
+      </a-flex>
+
         <a-form-item label="名称" name="name">
           <a-input v-model:value="pictureForm.name" placeholder="请输入名称" />
         </a-form-item>
@@ -56,9 +63,28 @@
         <a-form-item>
           <a-button type="primary" html-type="submit" style="width: 100%">创建</a-button>
         </a-form-item>
-
       </a-form>
-    </div>
+  </div>
+<!--  点击编辑按钮，显示模态框-->
+  <div v-if="picture" class="edit-picture">
+    <ImageCropper :imageUrl="picture.url"
+                  :onSuccess="onCropSuccess"
+                  ref="open"
+                  :picture="picture"
+                  :spaceId="spaceId"
+    />
+  </div>
+  点击ai扩图，显示模态框
+  <div v-if="picture" class="image-out-pain">
+    <ApiOutPainPicture :imageUrl="picture.url"
+                  :onSuccess="OnOutPainSuccess"  n
+                  ref="imageOutPaintingRef"
+                  :picture="picture"
+                  :spaceId="spaceId"
+    />
+  </div>
+
+
 </template>
 
 <script setup lang="ts">
@@ -69,17 +95,30 @@ import {message} from "ant-design-vue";
 import router from "@/router";
 import {useRoute} from "vue-router";
 import UrlPictureUpload from "@/components/UrlPictureUpload.vue";
+import ImageCropper from "@/components/ImageCropper.vue";
+import ApiOutPainPicture from "@/components/ApiOutPainPicture.vue";
 
 const pictureForm = reactive<API.PictureEditDto>({})
 
 const picture = ref<API.PictureVO>()
 
 const uploadType = ref<'file' | 'url'>('file')
+const open = ref()
+const imageOutPaintingRef = ref()
+
 
 
 const onSuccess = (newPicture: API.PictureVO) => {
   picture.value = newPicture
   pictureForm.name = newPicture.name
+}
+// 编辑图片成功
+const onCropSuccess = (newPicture: API.PictureVO) => {
+  picture.value = newPicture;
+}
+// Ai扩图片成功
+const OnOutPainSuccess = (newPicture: API.PictureVO) => {
+  picture.value = newPicture;
 }
 
 // 提交表单
@@ -156,6 +195,12 @@ const spaceId = computed(() => {
   return route.query?.spaceId;
 })
 
+const doEditPicture = () => {
+  open.value.handleOk()
+}
+const doImageOutPain = () => {
+  imageOutPaintingRef.value.handleOk()
+}
 onMounted(() => {
   getTagCategoryOptions()
   getOldPicture()

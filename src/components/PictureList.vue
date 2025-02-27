@@ -32,6 +32,14 @@
               </template>
             </a-card-meta>
             <template v-if="showOp" #actions>
+              <a-space @click="(e) =>doSharePicture(picture,e)">
+                <eye-outlined />
+                分享
+              </a-space>
+              <a-space @click="(e) =>doSearch(picture,e)">
+                <search-outlined />
+                搜索
+              </a-space>
               <a-space @click="(e) =>doEdit(picture,e)">
                 <edit-outlined />
                 编辑
@@ -45,6 +53,7 @@
         </a-list-item>
       </template>
     </a-list>
+    <SharePicture ref="shareModelRef" :link="shareLink"/>
   </div>
 </template>
 
@@ -52,6 +61,8 @@
 import { useRouter } from 'vue-router'
 import {deletePictureUsingPost} from "@/api/pictureController";
 import {message} from "ant-design-vue";
+import SharePicture from "@/components/SharePicture.vue";
+import {ref} from "vue";
 
 interface Props {
   dataList?: API.PictureVO[]
@@ -67,17 +78,28 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 跳转至图片详情
-const router = useRouter()
-const doClickPicture = (picture) => {
+const doClickPicture = (picture:API.PictureVO) => {
   router.push({
     path: `/picture/${picture.id}`,
   })
 }
+const router = useRouter()
+const shareModelRef = ref()
+const shareLink = ref<string>();
+
+const doSharePicture = (picture:API.PictureVO,e:Event) => {
+  e.stopPropagation()
+  shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.id}`;
+  if(shareModelRef.value) {
+    shareModelRef.value.handleOk()
+  }
+}
+
 // 编辑图片
 const doEdit = (picture,e) => {
   e.stopPropagation()
   router.push({
-    path: 'add_picture',
+    path: '/add_picture',
     query: {
       id: picture.id,
       spaceId: picture.spaceId,
@@ -97,8 +119,15 @@ const doDelete = async (picture,e) => {
     message.success('删除成功')
     props?.onReload?.()
   }else{
+    console.error(res.data)
     message.error('删除失败')
   }
+}
+
+//  搜索图片
+const doSearch = (picture,e) => {
+  e.stopPropagation()
+  window.open(`/search_picture?pictureId=${picture.id}`)
 }
 </script>
 

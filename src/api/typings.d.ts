@@ -5,15 +5,69 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseCreateOutPaintingTaskResponse_ = {
+    code?: number;
+    data?: CreateOutPaintingTaskResponse;
+    message?: string;
+  };
+
+  type BaseResponseGetOutPaintingTaskResponse_ = {
+    code?: number;
+    data?: GetOutPaintingTaskResponse;
+    message?: string;
+  };
+
   type BaseResponseInt_ = {
     code?: number;
     data?: number;
     message?: string;
   };
 
+  type BaseResponseListPictureVO_ = {
+    code?: number;
+    data?: PictureVO[];
+    message?: string;
+  };
+
+  type BaseResponseListSoImageSearchDto_ = {
+    code?: number;
+    data?: SoImageSearchDto[];
+    message?: string;
+  };
+
+  type BaseResponseListSpace_ = {
+    code?: number;
+    data?: Space[];
+    message?: string;
+  };
+
+  type BaseResponseListSpaceCategoryAnalyzeVo_ = {
+    code?: number;
+    data?: SpaceCategoryAnalyzeVo[];
+    message?: string;
+  };
+
   type BaseResponseListSpaceLevel_ = {
     code?: number;
     data?: SpaceLevel[];
+    message?: string;
+  };
+
+  type BaseResponseListSpaceSizeAnalyzeVo_ = {
+    code?: number;
+    data?: SpaceSizeAnalyzeVo[];
+    message?: string;
+  };
+
+  type BaseResponseListSpaceTagAnalyzeVo_ = {
+    code?: number;
+    data?: SpaceTagAnalyzeVo[];
+    message?: string;
+  };
+
+  type BaseResponseListSpaceUserAnalyzeVo_ = {
+    code?: number;
+    data?: SpaceUserAnalyzeVo[];
     message?: string;
   };
 
@@ -83,6 +137,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseSpaceUsageAnalyzeVo_ = {
+    code?: number;
+    data?: SpaceUsageAnalyzeVo;
+    message?: string;
+  };
+
   type BaseResponseSpaceVO_ = {
     code?: number;
     data?: SpaceVO;
@@ -101,12 +161,42 @@ declare namespace API {
     message?: string;
   };
 
+  type BatchEditePictureDto = {
+    category?: string;
+    nameRule?: string;
+    pictureIdList?: number[];
+    spaceId?: number;
+    tags?: string[];
+  };
+
+  type CreateOutPaintingTaskResponse = {
+    code?: string;
+    message?: string;
+    output?: Output;
+    requestId?: string;
+  };
+
+  type CreatePictureOutPaintingTaskRequest = {
+    parameters?: Parameters;
+    pictureId?: number;
+  };
+
   type DeleteDto = {
     id?: number;
   };
 
   type DeleteRequest = {
     id?: number;
+  };
+
+  type GetOutPaintingTaskResponse = {
+    output?: Output1;
+    requestId?: string;
+  };
+
+  type GetOutPaintingTaskUsingGETParams = {
+    /** taskId */
+    taskId: string;
   };
 
   type getPictureByIdUsingGETParams = {
@@ -150,6 +240,23 @@ declare namespace API {
     userRole?: string;
   };
 
+  type Output = {
+    taskId?: string;
+    taskStatus?: string;
+  };
+
+  type Output1 = {
+    code?: string;
+    endTime?: string;
+    message?: string;
+    outputImageUrl?: string;
+    scheduledTime?: string;
+    submitTime?: string;
+    taskId?: string;
+    taskMetrics?: TaskMetrics;
+    taskStatus?: string;
+  };
+
   type PagePicture_ = {
     current?: number;
     pages?: number;
@@ -190,6 +297,20 @@ declare namespace API {
     total?: number;
   };
 
+  type Parameters = {
+    addWatermark?: boolean;
+    angle?: number;
+    bestQuality?: boolean;
+    bottomOffset?: number;
+    leftOffset?: number;
+    limitImageSize?: boolean;
+    outputRatio?: string;
+    rightOffset?: number;
+    topOffset?: number;
+    xScale?: number;
+    yScale?: number;
+  };
+
   type Picture = {
     category?: string;
     createTime?: string;
@@ -198,6 +319,7 @@ declare namespace API {
     introduction?: string;
     isDelete?: number;
     name?: string;
+    picColor?: string;
     picFormat?: string;
     picHeight?: number;
     picScale?: number;
@@ -291,6 +413,7 @@ declare namespace API {
     id?: number;
     introduction?: string;
     name?: string;
+    picColor?: string;
     picFormat?: string;
     picHeight?: number;
     picScale?: number;
@@ -303,6 +426,23 @@ declare namespace API {
     url?: string;
     user?: UserVo;
     userId?: number;
+  };
+
+  type SearchPictureByColorDto = {
+    picColor?: string;
+    spaceId?: number;
+  };
+
+  type SearchPictureByPictureDto = {
+    id?: number;
+  };
+
+  type SoImageSearchDto = {
+    http?: string;
+    https?: string;
+    imgUrl?: string;
+    imgkey?: string;
+    title?: string;
   };
 
   type Space = {
@@ -323,6 +463,18 @@ declare namespace API {
   type SpaceAddDto = {
     spaceLevel?: number;
     spaceName?: string;
+  };
+
+  type SpaceCategoryAnalyzeDto = {
+    queryAll?: boolean;
+    queryPublic?: boolean;
+    spaceId?: number;
+  };
+
+  type SpaceCategoryAnalyzeVo = {
+    category?: string;
+    count?: number;
+    totalSize?: number;
   };
 
   type SpaceEditDto = {
@@ -348,12 +500,54 @@ declare namespace API {
     userId?: number;
   };
 
+  type SpaceRankAnalyzeDto = {
+    topN?: number;
+  };
+
+  type SpaceSizeAnalyzeVo = {
+    count?: number;
+    sizeRange?: string;
+  };
+
+  type SpaceTagAnalyzeVo = {
+    count?: number;
+    tag?: string;
+  };
+
   type SpaceUpdateDto = {
     id?: number;
     maxCount?: number;
     maxSize?: number;
     spaceLevel?: number;
     spaceName?: string;
+  };
+
+  type SpaceUsageAnalyzeDto = {
+    queryAll?: boolean;
+    queryPublic?: boolean;
+    spaceId?: number;
+  };
+
+  type SpaceUsageAnalyzeVo = {
+    countUsageRatio?: number;
+    maxCount?: number;
+    maxSize?: number;
+    sizeUsageRatio?: number;
+    usedCount?: number;
+    usedSize?: number;
+  };
+
+  type SpaceUserAnalyzeDto = {
+    queryAll?: boolean;
+    queryPublic?: boolean;
+    spaceId?: number;
+    timeDimension?: string;
+    userId?: number;
+  };
+
+  type SpaceUserAnalyzeVo = {
+    count?: number;
+    period?: string;
   };
 
   type SpaceVO = {
@@ -369,6 +563,12 @@ declare namespace API {
     updateTime?: string;
     user?: UserVo;
     userId?: number;
+  };
+
+  type TaskMetrics = {
+    failed?: number;
+    succeeded?: number;
+    total?: number;
   };
 
   type testDownloadUsingGETParams = {

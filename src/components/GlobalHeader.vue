@@ -28,6 +28,7 @@
                 <a-avatar :src="loginUserStore.loginUser.userAvatar" shape="square" size="large"/>
                 {{ loginUserStore.loginUser.userName ?? '无名' }}
               </ASpace>
+
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="doLogout">

@@ -7,6 +7,20 @@
         <a-button type="primary" :href="`/add_picture?spaceId=${id}`" target="_blank">
           + 创建图片
         </a-button>
+        <a-button type="primary"
+                  ghost
+                  :icon="h(BarChartOutlined)"
+                  :href="`/SpaceAnalyzePage?spaceId=${id}`"
+                  target="_blank">
+          空间分析
+        </a-button>
+
+        <a-button :icon="h(EditOutlined)"
+                  @click="doBatchEdit"
+        >
+          + 批量修改图片
+        </a-button>
+
         <a-tooltip
           :title="`占用空间 ${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`"
         >
@@ -17,16 +31,28 @@
           />
         </a-tooltip>
       </a-space>
-
     </a-flex>
+    <PictureSearch :on-search="onSearch"/>
+
+    <!--      按照颜色搜索-->
+    <!-- 按颜色搜索 -->
+    <a-form-item label="按颜色搜索" style="margin-top: 16px">
+      <color-picker format="hex" @pureColorChange="onColorChange" />
+    </a-form-item>
+
+
     <!-- 图片列表 -->
     <PictureList
       :dataList="dataList"
       :loading="loading"
-      show-op
+      :show-op="true"
       :on-reload="fetchData"
     />
-
+<!--    批量修改图片-->
+    <BatchEditePicture ref="batchEditPictureModalRef"
+                       :spaceId="id"
+                       :pictureList="dataList"
+                       :onSuccess="onBatchEditPictureSuccess"/>
     <a-pagination
       style="text-align: right"
       v-model:current="searchParams.current"
@@ -35,24 +61,34 @@
       :show-total="() => `图片总数 ${total} / ${space.maxCount}`"
       @change="onPageChange"
     />
-
-
-
   </div>
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
+import {h, onMounted, ref} from "vue";
 import {getSpaceVoByIdUsingGet} from "@/api/spaceController";
 import {message} from "ant-design-vue";
-import {listPictureVoByPageUsingPost} from "@/api/pictureController";
+import {
+  listPictureVoByPageUsingPost,
+  searchPictureByColorUsingPost
+} from "@/api/pictureController";
 import {formatSize} from "@/utils";
 import PictureList from "@/components/PictureList.vue";
+import PictureSearch from "@/pages/picture/PictureSearch.vue";
+import {ColorPicker} from "vue3-colorpicker";
+import BatchEditePicture from "@/components/BatchEditePicture.vue";
+import {EditOutlined,BarChartOutlined} from "@ant-design/icons-vue";
 
 const props = defineProps<{
   id: string | number
 }>()
+
 const space = ref<API.SpaceVO>({})
+// 数据
+const dataList = ref([])
+const total = ref(0)
+const loading = ref(true)
+const batchEditPictureModalRef = ref()
 
 // 获取空间详情
 const fetchSpaceDetail = async () => {
@@ -70,17 +106,9 @@ const fetchSpaceDetail = async () => {
   }
 }
 
-onMounted(() => {
-  fetchSpaceDetail()
-})
-
-// 数据
-const dataList = ref([])
-const total = ref(0)
-const loading = ref(true)
 
 // 搜索条件
-const searchParams = reactive<API.PictureQueryDto>({
+const searchParams = ref<API.PictureQueryDto>({
   current: 1,
   pageSize: 12,
   sortField: 'createTime',
@@ -89,18 +117,28 @@ const searchParams = reactive<API.PictureQueryDto>({
 
 // 分页参数
 const onPageChange = (page, pageSize) => {
-  searchParams.current = page
-  searchParams.pageSize = pageSize
+  searchParams.value.current = page
+  searchParams.value.pageSize = pageSize
   fetchData()
 }
 
-// 获取数据
+// 执行搜索按钮
+const onSearch = (newSearchParams: API.PictureQueryDto) => {
+  searchParams.value = {
+    ...searchParams.value,
+    ...newSearchParams,
+    current: 1,
+  }
+  fetchData()
+}
+
+// 获取数据列表
 const fetchData = async () => {
   loading.value = true
   // 转换搜索参数
   const params = {
     spaceId: props.id,
-    ...searchParams,
+    ...searchParams.value,
   }
   const res = await listPictureVoByPageUsingPost(params)
   if (res.data.data) {
@@ -112,11 +150,39 @@ const fetchData = async () => {
   loading.value = false
 }
 
+// 当颜色发生变化时，触发搜索图片
+const onColorChange = async (color: string) => {
+  const res = await searchPictureByColorUsingPost({
+    picColor: color,
+    spaceId: props.id,
+  })
+  if (res.data.code === 0 && res.data.data) {
+    const data = res.data.data ?? []
+    dataList.value = data
+    total.value = data.length
+  }else {
+    message.error('获取数据失败，' + res.data.message)
+  }
+}
+
+// 控制批量修改图片的弹窗
+const doBatchEdit = () => {
+  if (batchEditPictureModalRef.value) {
+    batchEditPictureModalRef.value.handleOk()
+  }
+  console.log("点击考虑")
+}
+
+// 批量修改图片成功回调函数
+const onBatchEditPictureSuccess = () => {
+  fetchData()
+}
+
 // 页面加载时请求一次
 onMounted(() => {
   fetchData()
+  fetchSpaceDetail()
 })
-
 
 </script>
 

@@ -32,6 +32,21 @@ export async function editPictureUsingPost(
   });
 }
 
+/** batchEditePicture POST /api/edit/batch */
+export async function batchEditePictureUsingPost(
+  body: API.BatchEditePictureDto,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>("/api/edit/batch", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** getPictureById GET /api/get */
 export async function getPictureByIdUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -143,12 +158,78 @@ export async function listPictureVoByPageWithCaffeineCacheAndRedisUsingPost(
   );
 }
 
+/** createOutPaintingTask POST /api/out_painting/create_task */
+export async function createOutPaintingTaskUsingPost(
+  body: API.CreatePictureOutPaintingTaskRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseCreateOutPaintingTaskResponse_>(
+    "/api/out_painting/create_task",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+/** GetOutPaintingTask GET /api/out_painting/get_task */
+export async function getOutPaintingTaskUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.GetOutPaintingTaskUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseGetOutPaintingTaskResponse_>(
+    "/api/out_painting/get_task",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
+}
+
 /** doPictureReview POST /api/review */
 export async function doPictureReviewUsingPost(
   body: API.PictureReviewDto,
   options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseBoolean_>("/api/review", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** searchPictureByColor POST /api/search/color */
+export async function searchPictureByColorUsingPost(
+  body: API.SearchPictureByColorDto,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseListPictureVO_>("/api/search/color", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** searchPicture POST /api/search/picture */
+export async function searchPictureUsingPost(
+  body: API.SearchPictureByPictureDto,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseListSoImageSearchDto_>("/api/search/picture", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
