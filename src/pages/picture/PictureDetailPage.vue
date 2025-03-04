@@ -53,7 +53,7 @@
             </a-descriptions-item>
           </a-descriptions>
           <a-space wrap>
-            <a-button type="primary" @click="doDownload">
+            <a-button  v-if="canEdit" type="primary" @click="doDownload">
               免费下载
               <template #icon>
                 <DownloadOutlined />
@@ -65,7 +65,7 @@
                 <EditOutlined />
               </template>
             </a-button>
-            <a-button v-if="canEdit" danger @click="doDelete">
+            <a-button v-if="canDelete" danger @click="doDelete">
               删除
               <template #icon>
                 <DeleteOutlined />
@@ -88,6 +88,7 @@ import {message} from "ant-design-vue";
 import {downloadImage, formatSize} from "@/utils/index";
 import {useLoginUserStore} from "@/store/user";
 import router from "@/router";
+import {SPACE_PERMISSION_ENUM} from "@/constants/space";
 
 const props = defineProps<{
   id: string | number
@@ -111,18 +112,18 @@ const fetchPictureDetail = async () => {
   }
 }
 
-const loginUserStore = useLoginUserStore()
+// const loginUserStore = useLoginUserStore()
 // 是否具有编辑权限
-const canEdit = computed(() => {
-  const loginUser = loginUserStore.loginUser;
-  // 未登录不可编辑
-  if (!loginUser.id) {
-    return false
-  }
-  // 仅本人或管理员可编辑
-  const user = picture.value.user || {}
-  return loginUser.id === user.id || loginUser.userRole === 'admin'
-})
+// const canEdit = computed(() => {
+//   const loginUser = loginUserStore.loginUser;
+//   // 未登录不可编辑
+//   if (!loginUser.id) {
+//     return false
+//   }
+//   // 仅本人或管理员可编辑
+//   const user = picture.value.user || {}
+//   return loginUser.id === user.id || loginUser.userRole === 'admin'
+// })
 
 // 编辑
 const doEdit = () => {
@@ -147,10 +148,14 @@ const doDelete = async () => {
 const doDownload = () => {
   downloadImage(picture.value.url)
 }
-
-
-
-
+function createPermissionChecker(permission: string) {
+  return computed(() => {
+    return (picture.value.permissionList ??[]).includes(permission);
+  });
+}
+// 权限
+const canEdit = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_EDIT);
+const canDelete = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_DELETE);
 
 onMounted(() => {
   fetchPictureDetail()

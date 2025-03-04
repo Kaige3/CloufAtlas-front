@@ -74,7 +74,7 @@
                   :spaceId="spaceId"
     />
   </div>
-  点击ai扩图，显示模态框
+<!--  点击ai扩图，显示模态框-->
   <div v-if="picture" class="image-out-pain">
     <ApiOutPainPicture :imageUrl="picture.url"
                   :onSuccess="OnOutPainSuccess"  n

@@ -40,11 +40,11 @@
                 <search-outlined />
                 搜索
               </a-space>
-              <a-space @click="(e) =>doEdit(picture,e)">
+              <a-space v-if="canEdit" @click="(e) =>doEdit(picture,e)">
                 <edit-outlined />
                 编辑
               </a-space>
-              <a-space @click="(e) =>doDelete(picture,e)">
+              <a-space v-if="canDelete" @click="(e) =>doDelete(picture,e)">
                 <delete-outlined />
                 删除
               </a-space>
@@ -69,12 +69,16 @@ interface Props {
   loading?: boolean
   showOp?: boolean
   onReload?: () => void
+  canEdit?: boolean
+  canDelete?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   dataList: () => [],
   loading: false,
-  showOp: false
+  showOp: false,
+  canEdit: false,
+  canDelete: false,
 })
 
 // 跳转至图片详情

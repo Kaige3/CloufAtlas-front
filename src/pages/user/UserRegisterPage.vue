@@ -17,7 +17,7 @@
       </a-form-item>
 
       <a-form-item
-        name="userPassword"
+        name="checkPassword"
         :rules="[{ required: true, message: '请输入确认密码' },
                 { min:8,message:'确认密码至少8位'}]"
       >
@@ -30,7 +30,7 @@
       </div>
 
       <a-form-item>
-        <a-button type="primary" html-type="submit" style="width:100%">登录</a-button>
+        <a-button type="primary" html-type="submit" style="width:100%">注册</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -60,11 +60,12 @@ const handleSubmit = async (values: any) => {
     message.error('两次输入的密码不一致');
     return;
   }
+  console.log('=======',values)
   const res = await userRegisterUsingPost(values);
-  if (res.data.code === 200 && res.data.data) {
+  if (res.data.code === 0 && res.data.data) {
     message.success('注册成功');
     router.push({
-      path: '/user/register',
+      path: '/user/login',
       replace: true,
     })
   }
